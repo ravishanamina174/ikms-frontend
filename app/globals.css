@@ -3,6 +3,13 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --purple-primary: #8b5cf6;
+  --purple-light: #a78bfa;
+  --purple-dark: #7c3aed;
+  --grey-light: #f3f4f6;
+  --grey-medium: #9ca3af;
+  --grey-dark: #4b5563;
+  --grey-darker: #1f2937;
 }
 
 @theme inline {
@@ -16,11 +23,167 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --grey-light: #1f2937;
+    --grey-medium: #6b7280;
+    --grey-dark: #d1d5db;
+    --grey-darker: #f3f4f6;
   }
 }
 
 body {
-  background: var(--background);
+  background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  min-height: 100vh;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: linear-gradient(135deg, #0a0a0a 0%, #111111 100%);
+  }
+}
+
+/* Gradient Background Pattern */
+.gradient-bg {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.01) 100%);
+  position: relative;
+}
+
+.gradient-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .gradient-bg {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.01) 100%);
+  }
+  
+  .gradient-bg::before {
+    background-image: 
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  }
+}
+
+/* Button Animations */
+@keyframes buttonClick {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.button-click {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-click:active {
+  animation: buttonClick 0.2s ease;
+  transform: scale(0.95);
+}
+
+/* Message Animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.message-enter {
+  animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.message-typing {
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* Chat Frame Glow */
+.chat-frame {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.chat-frame:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat-frame {
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+  
+  .chat-frame:hover {
+    box-shadow: 0 8px 30px rgba(255, 255, 255, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.12);
+  }
+}
+
+/* Smooth Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Toggle Animation */
+@keyframes toggleSlide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.toggle-slide {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
