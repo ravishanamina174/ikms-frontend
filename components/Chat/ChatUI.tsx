@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { askQuestion, uploadPDF } from "@/lib/api"
 import PlanningToggle from "@/components/Toggle/PlanningToggle"
+import WelcomeModal from "@/components/WelcomeModal"
 
 interface Message {
   id: number
@@ -17,8 +18,17 @@ export default function ChatUI() {
   const [usePlanning, setUsePlanning] = useState(true)
   const [loading, setLoading] = useState(false)
   const [messageId, setMessageId] = useState(0)
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false)
+  const [pdfUploaded, setPdfUploaded] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const hasSeenModal = localStorage.getItem("welcomeModalShown")
+    if (!hasSeenModal) {
+      setShowWelcomeModal(true)
+    }
+  }, [])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -76,6 +86,7 @@ export default function ChatUI() {
     if (!e.target.files?.[0]) return
     try {
       await uploadPDF(e.target.files[0])
+      setPdfUploaded(true)
       alert("PDF indexed successfully")
       if (fileInputRef.current) {
         fileInputRef.current.value = ""
@@ -93,42 +104,37 @@ export default function ChatUI() {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6">
-      {/* Toggle */}
-      <div className="flex justify-center">
-        <PlanningToggle
-          value={usePlanning}
-          onChange={setUsePlanning}
-        />
-      </div>
-
-      {/* Chat Frame */}
-      <div className="gradient-bg chat-frame rounded-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 overflow-hidden shadow-lg">
+    <>
+      {showWelcomeModal && (
+        <WelcomeModal onClose={() => setShowWelcomeModal(false)} />
+      )}
+      <div className="w-full max-w-4xl mx-auto space-y-6">
+        {/* Chat Frame */}
+        <div className="bg-white chat-frame rounded-2xl bg-white dark:bg-white border border-gray-200 dark:border-gray-200 overflow-hidden shadow-xl">
         {/* Chat Messages Area */}
-        <div className="h-[500px] overflow-y-auto custom-scrollbar p-6 space-y-6">
+        <div className="h-[500px] overflow-y-auto custom-scrollbar p-6 space-y-4">
           {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
-              <div className="w-20 h-20 rounded-full bg-black dark:bg-white flex items-center justify-center shadow-lg">
-                <svg
-                  className="w-10 h-10 text-white dark:text-black"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                  />
-                </svg>
+            <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
+              <div className="relative">
+                {/* Modern AI Icon with dark green gradient */}
+                <div className="w-28 h-28 bg-gradient-to-br from-[#1a4d3a] via-[#2d5f47] to-[#1a4d3a] rounded-2xl flex items-center justify-center shadow-2xl transform hover:scale-105 transition-all duration-300">
+                  <svg className="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M6.343 6.343l-.707.707m12.728 0l-.707-.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                </div>
+                {/* Modern floating particles with dark green */}
+                <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#2d5f47] rounded-full animate-pulse shadow-lg" style={{ animationDelay: "0s" }}></div>
+                <div className="absolute -bottom-1 -left-1 w-4 h-4 bg-[#1a4d3a] rounded-full animate-pulse shadow-lg" style={{ animationDelay: "0.7s" }}></div>
+                <div className="absolute top-1/2 -right-3 w-3 h-3 bg-[#2d5f47] rounded-full animate-pulse shadow-lg" style={{ animationDelay: "1.4s" }}></div>
               </div>
-              <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
-                Let the Data Speak
-              </h3>
-              <p className="text-gray-500 dark:text-gray-400 max-w-md">
-                Ask questions about your document and get intelligent answers powered by AI
-              </p>
+              <div>
+                <h3 className="text-3xl font-bold text-black dark:text-black mb-3">
+                  Let the Data Speak
+                </h3>
+                <p className="text-gray-600 dark:text-gray-600 max-w-md text-base leading-relaxed">
+                  Ask questions about your document and get intelligent answers powered by AI
+                </p>
+              </div>
             </div>
           ) : (
             <>
@@ -138,14 +144,14 @@ export default function ChatUI() {
                   className={`message-enter flex items-start gap-3 ${message.isUser ? "flex-row-reverse" : "flex-row"}`}
                 >
                   {/* Avatar */}
-                  <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-md ${
+                  <div className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110 ${
                     message.isUser 
-                      ? "bg-black dark:bg-white" 
-                      : "bg-gray-100 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600"
+                      ? "bg-gray-500 dark:from-black dark:to-gray-800" 
+                      : "bg-gradient-to-br from-[#1a4d3a] to-[#2d5f47] dark:from-[#1a4d3a] dark:to-[#2d5f47]"
                   }`}>
                     {message.isUser ? (
                       <svg
-                        className="w-6 h-6 text-white dark:text-black"
+                        className="w-5 h-5 text-white"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -159,7 +165,7 @@ export default function ChatUI() {
                       </svg>
                     ) : (
                       <svg
-                        className="w-6 h-6 text-gray-700 dark:text-gray-300"
+                        className="w-5 h-5 text-white"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -168,7 +174,7 @@ export default function ChatUI() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M6.343 6.343l-.707.707m12.728 0l-.707-.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
                         />
                       </svg>
                     )}
@@ -179,10 +185,10 @@ export default function ChatUI() {
                     message.isUser ? "flex justify-end" : "flex justify-start"
                   }`}>
                     <div
-                      className={`px-5 py-3.5 shadow-md ${
+                      className={`px-4 py-3 shadow-lg transition-all duration-200 ${
                         message.isUser
-                          ? "bg-black dark:bg-white text-white dark:text-black rounded-3xl rounded-tr-sm"
-                          : "bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600 rounded-3xl rounded-tl-sm"
+                          ? "bg-gray-100  text-black rounded-2xl rounded-tr-sm"
+                          : "bg-white dark:bg-white text-black  border border-gray-200 dark:border-gray-200 rounded-2xl rounded-tl-sm"
                       }`}
                     >
                       <p className="text-sm leading-relaxed whitespace-pre-wrap">
@@ -195,9 +201,9 @@ export default function ChatUI() {
               {loading && (
                 <div className="flex items-start gap-3 message-typing">
                   {/* Robot Avatar */}
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center shadow-md">
+                  <div className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-[#1a4d3a] to-[#2d5f47] dark:from-[#1a4d3a] dark:to-[#2d5f47] flex items-center justify-center shadow-lg animate-pulse">
                     <svg
-                      className="w-6 h-6 text-gray-700 dark:text-gray-300"
+                      className="w-5 h-5 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -206,18 +212,18 @@ export default function ChatUI() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M6.343 6.343l-.707.707m12.728 0l-.707-.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
                       />
                     </svg>
                   </div>
-                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 border border-gray-200 dark:border-gray-600 rounded-3xl rounded-tl-sm px-5 py-3.5 shadow-md">
+                  <div className="bg-white dark:bg-white border border-gray-200 dark:border-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
                     <div className="flex items-center space-x-3">
                       <div className="flex space-x-1.5">
-                        <div className="w-2 h-2 bg-black dark:bg-white rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                        <div className="w-2 h-2 bg-black dark:bg-white rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                        <div className="w-2 h-2 bg-black dark:bg-white rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                        <div className="w-2 h-2 bg-[#1a4d3a] rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                        <div className="w-2 h-2 bg-[#2d5f47] rounded-full animate-bounce" style={{ animationDelay: "200ms" }}></div>
+                        <div className="w-2 h-2 bg-[#1a4d3a] rounded-full animate-bounce" style={{ animationDelay: "400ms" }}></div>
                       </div>
-                      <span className="text-sm text-gray-600 dark:text-gray-300">AI is thinking...</span>
+                      <span className="text-sm text-black dark:text-black font-medium">AI is thinking...</span>
                     </div>
                   </div>
                 </div>
@@ -228,7 +234,7 @@ export default function ChatUI() {
         </div>
 
         {/* Input Bar */}
-        <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+        <div className="border-t border-gray-200 dark:border-gray-200 bg-white dark:bg-white p-4">
           <div className="flex items-center gap-3">
             {/* File Upload Button */}
             <input
@@ -241,37 +247,59 @@ export default function ChatUI() {
             />
             <label
               htmlFor="file-upload"
-              className="button-click flex items-center justify-center w-12 h-12 rounded-2xl bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 active:scale-95"
+              className={`button-click flex items-center justify-center px-4 h-10 rounded-xl cursor-pointer transition-all duration-300 shadow-md hover:shadow-lg font-medium text-sm ${
+                pdfUploaded
+                  ? "bg-gray-100 dark:bg-gray-100 text-gray-600 dark:text-gray-600 border border-gray-300 dark:border-gray-300 hover:bg-gray-200 dark:hover:bg-gray-200"
+                  : "bg-black text-white dark:text-white border border-black dark:border-black hover:from-gray-800 hover:to-gray-700 dark:hover:from-gray-200 dark:hover:to-gray-700"
+              }`}
             >
               <svg
-                className="w-5 h-5"
+                className={`w-5 h-5 mr-2 ${pdfUploaded ? "text-gray-600 dark:text-gray-600" : "text-white"}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                />
+                {pdfUploaded ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                  />
+                )}
               </svg>
+              {pdfUploaded ? "PDF Uploaded" : "Upload PDF"}
             </label>
+
+            {/* Toggle next to Upload */}
+            <div className="flex items-center">
+              <PlanningToggle
+                value={usePlanning}
+                onChange={setUsePlanning}
+              />
+            </div>
 
             {/* Text Input */}
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="flex-1 h-12 px-5 rounded-2xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent transition-all duration-200"
-              placeholder="What's your next insight? Ask and find out."
+              className="flex-1 h-10 px-4 rounded-xl border border-gray-300 dark:border-gray-300 bg-white dark:bg-white text-black dark:text-black placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1a4d3a] focus:border-[#1a4d3a] transition-all duration-200 shadow-sm"
+              placeholder="Ask a question about the content..."
             />
 
             {/* Send Button */}
             <button
               onClick={sendMessage}
               disabled={!input.trim() || loading}
-              className="button-click flex items-center justify-center w-12 h-12 rounded-2xl bg-black dark:bg-white text-white dark:text-black shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95"
+              className="button-click flex items-center justify-center w-11 h-10 rounded-xl bg-black dark:from-black dark:to-gray-800 text-white dark:text-white border border-black dark:border-black shadow-md hover:shadow-lg hover:from-gray-800 hover:to-gray-700 dark:hover:from-gray-800 dark:hover:to-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 active:scale-95"
             >
               {loading ? (
                 <svg
@@ -304,7 +332,7 @@ export default function ChatUI() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
                   />
                 </svg>
               )}
@@ -312,6 +340,7 @@ export default function ChatUI() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }
