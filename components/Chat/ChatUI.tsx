@@ -10,6 +10,9 @@ interface Message {
   text: string
   isUser: boolean
   timestamp: number
+  plan?: string | null
+  sub_questions?: string[] | null
+  context?: string | null
 }
 
 export default function ChatUI() {
@@ -65,6 +68,9 @@ export default function ChatUI() {
         text: data.answer,
         isUser: false,
         timestamp: Date.now(),
+        plan: data.plan ?? null,
+        sub_questions: data.sub_questions ?? null,
+        context: data.context ?? null,
       }
       setMessages((prev) => [...prev, aiMessage])
       setMessageId((prev) => prev + 2)
@@ -191,9 +197,48 @@ export default function ChatUI() {
                           : "bg-white dark:bg-white text-black  border border-gray-200 dark:border-gray-200 rounded-2xl rounded-tl-sm"
                       }`}
                     >
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                        {message.text}
-                      </p>
+                      {message.isUser ? (
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                          {message.text}
+                        </p>
+                      ) : (
+                        <div className="space-y-3">
+                          {/* Fake visual flow bar (informational only) */}
+                          <div className="flex items-center text-xs text-gray-500 space-x-2 mb-1">
+                            <div className="px-2 py-1 rounded-full bg-gray-100 text-gray-600">Planning</div>
+                            <div className="text-gray-400">→</div>
+                            <div className="px-2 py-1 rounded-full bg-gray-100 text-gray-600">Retrieval</div>
+                            <div className="text-gray-400">→</div>
+                            <div className="px-2 py-1 rounded-full bg-gray-100 text-gray-600 font-semibold">Answer</div>
+                          </div>
+
+                          {/* Search Plan (REAL DATA) */}
+                          {message.plan ? (
+                            <div className="pt-2 border-t border-gray-100">
+                              <div className="text-xs text-gray-500 mb-1">🧠 <span className="font-medium">Search Plan</span></div>
+                              <div className="text-sm text-gray-800 whitespace-pre-wrap">{message.plan}</div>
+                            </div>
+                          ) : null}
+
+                          {/* Sub-Questions (REAL DATA) */}
+                          {message.sub_questions && message.sub_questions.length > 0 ? (
+                            <div className={`pt-2 ${message.plan ? "border-t border-gray-100" : ""}`}>
+                              <div className="text-xs text-gray-500 mb-1">🔍 <span className="font-medium">Sub-Questions</span></div>
+                              <ul className="list-disc list-inside text-sm text-gray-700">
+                                {message.sub_questions.map((q, idx) => (
+                                  <li key={idx} className="mb-1 whitespace-pre-wrap">{q}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          ) : null}
+
+                          {/* Final Answer (REAL DATA) — visually dominant */}
+                          <div className="pt-2 border-t border-gray-100">
+                            <div className="text-xs text-gray-500 mb-1">✅ <span className="font-medium">Final Answer</span></div>
+                            <p className="text-sm font-semibold leading-relaxed whitespace-pre-wrap text-black">{message.text}</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
