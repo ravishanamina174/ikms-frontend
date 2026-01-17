@@ -1,4 +1,7 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+// Use the public env var when available, otherwise fall back to the deployed backend URL
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://ikms-backend-6655.onrender.com"
 
 export async function uploadPDF(file: File) {
   const formData = new FormData()
