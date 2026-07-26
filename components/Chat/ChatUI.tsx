@@ -100,7 +100,6 @@ export default function ChatUI() {
       console.error("Upload error details:", err)
       alert("Error uploading PDF. Please check your backend connection.")
     } finally {
-      // FIX: Ensure the input is always cleared so the same file can be selected again
       if (e.target) {
         e.target.value = ""
       }
@@ -114,35 +113,30 @@ export default function ChatUI() {
     }
   }
 
-
-// Doodle Art Bot SVG component (Free design, no borders)
+  // Doodle Art Bot SVG component
   const BotDoodleIcon = () => (
     <svg 
-      className="h-10 w-auto -ml-8 drop-shadow-sm" // Negative margin lets the swoosh lines float naturally outside the chat bubble alignment
+      className="h-10 w-auto -ml-8 drop-shadow-sm text-[#292929] dark:text-gray-300" 
       viewBox="0 0 140 80" 
       fill="none" 
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* 1. Doodle Swoosh Lines (Floating to the left) */}
       <path 
         d="M 15 32 C 35 22, 60 18, 80 32" 
-        stroke="#292929" 
+        stroke="currentColor" 
         strokeWidth="2.5" 
         strokeLinecap="round" 
       />
       <path 
         d="M 32 42 C 45 33, 62 30, 80 43" 
-        stroke="#292929" 
+        stroke="currentColor" 
         strokeWidth="2.5" 
         strokeLinecap="round" 
       />
 
-      {/* 2. Yellow Circle Background */}
       <circle cx="100" cy="40" r="28" fill="#F6C764"/>
 
-      {/* 3. Tilted Open Book Group */}
       <g transform="translate(100 40) rotate(-15)">
-        {/* Book pages outline */}
         <path 
           d="M -16,-12 Q -8,-17 0,-10 Q 8,-17 16,-12 L 13,14 Q 7,10 0,13 Q -7,10 -13,14 Z" 
           fill="white" 
@@ -151,14 +145,12 @@ export default function ChatUI() {
           strokeLinejoin="round" 
           strokeLinecap="round"
         />
-        {/* Center Spine Crease */}
         <path 
           d="M 0,-10 L 0,13" 
           stroke="#292929" 
           strokeWidth="2.5" 
           strokeLinecap="round"
         />
-        {/* Eyes on the pages */}
         <circle cx="-5.5" cy="-2" r="2" fill="#292929"/>
         <circle cx="5.5" cy="-2" r="2" fill="#292929"/>
       </g>
@@ -171,29 +163,28 @@ export default function ChatUI() {
         <WelcomeModal onClose={() => setShowWelcomeModal(false)} />
       )}
       <div className="w-full max-w-4xl mx-auto p-4 sm:p-6">
-        {/* Chat Frame - Modern White Look */}
-        <div className="bg-white rounded-[0.7rem] border border-gray-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
+        {/* Chat Frame - Modern Light & Dark Look */}
+        <div className="bg-white dark:bg-[#0A0A0A] rounded-[0.7rem] border border-gray-200 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none overflow-hidden flex flex-col">
           
           {/* Header Area */}
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
+          <div className="px-6 py-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between bg-white dark:bg-[#0A0A0A]">
             <div className="flex items-center gap-3 pl-1">
               <div>
-                <h2 className="text-[0.9rem] font-semibold text-gray-900">Assistant</h2>
-                <p className="text-xs text-gray-500">Document Q&A</p>
+                <h2 className="text-[0.9rem] font-semibold text-gray-900 dark:text-gray-100">Assistant</h2>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Document Q&A</p>
               </div>
             </div>
-            {/* The crossing icons have been completely removed from here */}
           </div>
 
           {/* Chat Messages Area */}
-          <div className="h-[500px] overflow-y-auto custom-scrollbar p-6 space-y-6 bg-[#fafafa]/30">
+          <div className="h-[500px] overflow-y-auto custom-scrollbar p-6 space-y-6 bg-[#fafafa]/30 dark:bg-[#111111]">
             {messages.length === 0 ? (
               <div className="flex flex-col items-start justify-start h-full">
                 <div className="flex items-center gap-3 pl-3">
-                  <div className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 shadow-sm flex items-center justify-center flex-shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 shadow-sm flex items-center justify-center flex-shrink-0">
                     <BotDoodleIcon />
                   </div>
-                  <div className="px-4 py-2 bg-white border border-gray-200 rounded-[0.4rem] text-sm text-gray-700 shadow-sm">
+                  <div className="px-4 py-2 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-[0.4rem] text-sm text-gray-700 dark:text-gray-200 shadow-sm">
                     Ask me something!
                   </div>
                 </div>
@@ -207,7 +198,7 @@ export default function ChatUI() {
                   >
                     {/* Avatar */}
                     {!message.isUser && (
-                      <div className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 shadow-sm flex items-center justify-center flex-shrink-0 mt-1">
+                      <div className="w-9 h-9 rounded-xl bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 shadow-sm flex items-center justify-center flex-shrink-0 mt-1">
                         <BotDoodleIcon />
                       </div>
                     )}
@@ -217,8 +208,8 @@ export default function ChatUI() {
                       <div
                         className={`px-4 py-2.5 text-sm leading-relaxed transition-all duration-200 ${
                           message.isUser
-                            ? "bg-gray-100 text-gray-800 rounded-2xl"
-                            : "bg-white text-gray-800 border border-gray-200 rounded-2xl shadow-sm"
+                            ? "bg-gray-100 dark:bg-white/10 text-gray-800 dark:text-gray-100 rounded-2xl"
+                            : "bg-white dark:bg-[#1A1A1A] text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-white/5 rounded-2xl shadow-sm"
                         }`}
                       >
                         {message.isUser ? (
@@ -227,17 +218,17 @@ export default function ChatUI() {
                           <div className="space-y-3">
                             {/* Search Plan */}
                             {message.plan ? (
-                              <div className="pb-2 border-b border-gray-100">
-                                <div className="text-xs text-gray-400 mb-1 font-medium tracking-wide uppercase">Plan</div>
-                                <div className="text-sm text-gray-600 whitespace-pre-wrap">{message.plan}</div>
+                              <div className="pb-2 border-b border-gray-100 dark:border-white/10">
+                                <div className="text-xs text-gray-400 dark:text-gray-500 mb-1 font-medium tracking-wide uppercase">Plan</div>
+                                <div className="text-sm text-gray-600 dark:text-gray-400 whitespace-pre-wrap">{message.plan}</div>
                               </div>
                             ) : null}
 
                             {/* Sub-Questions */}
                             {message.sub_questions && message.sub_questions.length > 0 ? (
-                              <div className={`pb-2 ${message.plan ? "" : "border-b border-gray-100"}`}>
-                                <div className="text-xs text-gray-400 mb-1 font-medium tracking-wide uppercase">Sub-Questions</div>
-                                <ul className="list-disc list-inside text-sm text-gray-600">
+                              <div className={`pb-2 ${message.plan ? "" : "border-b border-gray-100 dark:border-white/10"}`}>
+                                <div className="text-xs text-gray-400 dark:text-gray-500 mb-1 font-medium tracking-wide uppercase">Sub-Questions</div>
+                                <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400">
                                   {message.sub_questions.map((q, idx) => (
                                     <li key={idx} className="mb-1 whitespace-pre-wrap">{q}</li>
                                   ))}
@@ -247,7 +238,7 @@ export default function ChatUI() {
 
                             {/* Final Answer */}
                             <div>
-                              <p className="text-sm text-gray-800 whitespace-pre-wrap">{message.text}</p>
+                              <p className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">{message.text}</p>
                             </div>
                           </div>
                         )}
@@ -257,13 +248,13 @@ export default function ChatUI() {
                 ))}
                 {loading && (
                   <div className="flex items-center gap-3 message-typing">
-                    <div className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 shadow-sm flex items-center justify-center flex-shrink-0">
+                    <div className="w-9 h-9 rounded-xl bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 shadow-sm flex items-center justify-center flex-shrink-0">
                       <BotDoodleIcon />
                     </div>
-                    <div className="px-4 py-3 bg-white border border-gray-200 rounded-2xl shadow-sm flex items-center space-x-1.5">
-                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                    <div className="px-4 py-3 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-2xl shadow-sm flex items-center space-x-1.5">
+                      <div className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                      <div className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                      <div className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
                     </div>
                   </div>
                 )}
@@ -273,8 +264,8 @@ export default function ChatUI() {
           </div>
 
           {/* Seamless Input Bar */}
-          <div className="border-t border-gray-100 bg-white p-3">
-            <div className="flex items-center gap-3">
+          <div className="border-t border-gray-100 dark:border-white/10 bg-white dark:bg-[#0A0A0A] p-3">
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 overflow-y-auto max-h-32 sm:max-h-none custom-scrollbar">
               
               {/* Minimal Upload Button */}
               <input
@@ -288,10 +279,10 @@ export default function ChatUI() {
               <label
                 htmlFor="file-upload"
                 title="Upload PDF"
-                className={`flex items-center justify-center w-10 h-10 rounded-md cursor-pointer transition-colors ${
+                className={`flex items-center justify-center w-10 h-10 rounded-md cursor-pointer transition-colors flex-shrink-0 ${
                   pdfUploaded
-                    ? "text-green-500 bg-green-50"
-                    : "text-gray-400 bg-gray-200 hover:text-gray-700 hover:bg-gray-300"
+                    ? "text-green-500 bg-green-50 dark:bg-green-500/10 dark:text-green-400"
+                    : "text-gray-400 bg-gray-200 hover:text-gray-700 hover:bg-gray-300 dark:bg-white/5 dark:hover:bg-white/10 dark:text-gray-400 dark:hover:text-gray-200"
                 }`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -308,12 +299,12 @@ export default function ChatUI() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                className="flex-1 h-10 bg-transparent border-none text-gray-800 text-sm placeholder-gray-400 focus:outline-none focus:ring-0"
+                className="flex-1 min-w-[120px] h-10 bg-transparent border-none text-gray-800 dark:text-gray-100 text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-0"
                 placeholder="Ask me something or..."
               />
 
               {/* Minimal Planning Toggle */}
-              <div className="flex items-center h-10 px-2 bg-white border border-gray-200 rounded-[0.5rem] shadow-sm">
+              <div className="flex items-center h-10 px-2 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/10 rounded-[0.5rem] shadow-sm flex-shrink-0">
                 <PlanningToggle
                   value={usePlanning}
                   onChange={setUsePlanning}
@@ -324,10 +315,10 @@ export default function ChatUI() {
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || loading}
-                className="flex items-center justify-center w-10 h-10 rounded-md bg-white text-gray-700 border border-gray-200 shadow-sm hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-white transition-colors"
+                className="flex items-center justify-center w-10 h-10 rounded-md bg-white dark:bg-[#1A1A1A] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-white/10 shadow-sm hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-[#1A1A1A] transition-colors flex-shrink-0"
               >
                 {loading ? (
-                  <svg className="w-4 h-4 animate-spin text-gray-500" fill="none" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 animate-spin text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>

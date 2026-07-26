@@ -21,7 +21,7 @@ export default function PlanningToggle({
       <button
         type="button"
         onClick={() => onChange(!value)}
-        className={`button-click relative inline-flex h-6 w-11 items-center rounded-[0.3rem] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#5b615f] focus:ring-offset-2 ${
+        className={`button-click relative inline-flex h-6 w-11 items-center rounded-[0.9rem] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#5b615f] focus:ring-offset-2 ${
           value
             ? "bg-gradient-to-r from-[#393a39] to-[#2e2e2e] dark:from-[#838685] dark:to-[#808281] shadow-md"
             : "bg-gray-300 dark:bg-gray-300"
