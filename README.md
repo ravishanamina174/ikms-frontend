@@ -30,13 +30,4 @@
 ### Deployment
 - Deployed to Vercel (frontend). Backend hosted on Render. Ensure `NEXT_PUBLIC_API_URL` (if used) points to the backend API.
 
-### Code Documentation (Key files)
-- **`app/`**: App Router pages and server components.
-- **`app/layout.tsx`**: Global layout and providers.
-- **`app/page.tsx`**: Main entry page for the application.
-- **`components/WelcomeModal.tsx`**: Onboarding modal shown to new users.
-- **`components/Chat/ChatUI.tsx`**: Chat interface connecting to the backend conversational API.
-- **`components/Toggle/PlanningToggle.tsx`**: Small feature toggle used by the UI.
-- **`components/Upload/PdfUpload.tsx`**: PDF upload UI and client-side validations.
-- **`lib/api.ts`**: API helper functions and base URL usage.
-- **`public/`**: Static images and icons.
+
