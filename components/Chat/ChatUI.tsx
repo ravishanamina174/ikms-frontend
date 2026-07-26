@@ -89,16 +89,21 @@ export default function ChatUI() {
   }
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    if (!e.target.files?.[0]) return
+    const file = e.target.files?.[0]
+    if (!file) return
+    
     try {
-      await uploadPDF(e.target.files[0])
+      await uploadPDF(file)
       setPdfUploaded(true)
       alert("PDF indexed successfully")
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""
-      }
     } catch (err) {
-      alert("Error uploading PDF")
+      console.error("Upload error details:", err)
+      alert("Error uploading PDF. Please check your backend connection.")
+    } finally {
+      // FIX: Ensure the input is always cleared so the same file can be selected again
+      if (e.target) {
+        e.target.value = ""
+      }
     }
   }
 
@@ -109,282 +114,232 @@ export default function ChatUI() {
     }
   }
 
+
+// Doodle Art Bot SVG component (Free design, no borders)
+  const BotDoodleIcon = () => (
+    <svg 
+      className="h-10 w-auto -ml-8 drop-shadow-sm" // Negative margin lets the swoosh lines float naturally outside the chat bubble alignment
+      viewBox="0 0 140 80" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* 1. Doodle Swoosh Lines (Floating to the left) */}
+      <path 
+        d="M 15 32 C 35 22, 60 18, 80 32" 
+        stroke="#292929" 
+        strokeWidth="2.5" 
+        strokeLinecap="round" 
+      />
+      <path 
+        d="M 32 42 C 45 33, 62 30, 80 43" 
+        stroke="#292929" 
+        strokeWidth="2.5" 
+        strokeLinecap="round" 
+      />
+
+      {/* 2. Yellow Circle Background */}
+      <circle cx="100" cy="40" r="28" fill="#F6C764"/>
+
+      {/* 3. Tilted Open Book Group */}
+      <g transform="translate(100 40) rotate(-15)">
+        {/* Book pages outline */}
+        <path 
+          d="M -16,-12 Q -8,-17 0,-10 Q 8,-17 16,-12 L 13,14 Q 7,10 0,13 Q -7,10 -13,14 Z" 
+          fill="white" 
+          stroke="#292929" 
+          strokeWidth="2.5" 
+          strokeLinejoin="round" 
+          strokeLinecap="round"
+        />
+        {/* Center Spine Crease */}
+        <path 
+          d="M 0,-10 L 0,13" 
+          stroke="#292929" 
+          strokeWidth="2.5" 
+          strokeLinecap="round"
+        />
+        {/* Eyes on the pages */}
+        <circle cx="-5.5" cy="-2" r="2" fill="#292929"/>
+        <circle cx="5.5" cy="-2" r="2" fill="#292929"/>
+      </g>
+    </svg>
+  );
+
   return (
     <>
       {showWelcomeModal && (
         <WelcomeModal onClose={() => setShowWelcomeModal(false)} />
       )}
-      <div className="w-full max-w-4xl mx-auto space-y-6">
-        {/* Chat Frame */}
-        <div className="bg-white chat-frame rounded-2xl bg-white dark:bg-white border border-gray-200 dark:border-gray-200 overflow-hidden shadow-xl">
-        {/* Chat Messages Area */}
-        <div className="h-[500px] overflow-y-auto custom-scrollbar p-6 space-y-4">
-          {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
-              <div className="relative">
-                {/* Modern AI Icon with dark green gradient */}
-                <div className="w-28 h-28 bg-gradient-to-br from-[#1a4d3a] via-[#2d5f47] to-[#1a4d3a] rounded-2xl flex items-center justify-center shadow-2xl transform hover:scale-105 transition-all duration-300">
-                  <svg className="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M6.343 6.343l-.707.707m12.728 0l-.707-.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                </div>
-                {/* Modern floating particles with dark green */}
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#2d5f47] rounded-full animate-pulse shadow-lg" style={{ animationDelay: "0s" }}></div>
-                <div className="absolute -bottom-1 -left-1 w-4 h-4 bg-[#1a4d3a] rounded-full animate-pulse shadow-lg" style={{ animationDelay: "0.7s" }}></div>
-                <div className="absolute top-1/2 -right-3 w-3 h-3 bg-[#2d5f47] rounded-full animate-pulse shadow-lg" style={{ animationDelay: "1.4s" }}></div>
-              </div>
+      <div className="w-full max-w-4xl mx-auto p-4 sm:p-6">
+        {/* Chat Frame - Modern White Look */}
+        <div className="bg-white rounded-[0.7rem] border border-gray-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
+          
+          {/* Header Area */}
+          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
+            <div className="flex items-center gap-3 pl-1">
               <div>
-                <h3 className="text-3xl font-bold text-black dark:text-black mb-3">
-                  Let the Data Speak
-                </h3>
-                <p className="text-gray-600 dark:text-gray-600 max-w-md text-base leading-relaxed">
-                  Ask questions about your document and get intelligent answers powered by AI
-                </p>
+                <h2 className="text-[0.9rem] font-semibold text-gray-900">Assistant</h2>
+                <p className="text-xs text-gray-500">Document Q&A</p>
               </div>
             </div>
-          ) : (
-            <>
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`message-enter flex items-start gap-3 ${message.isUser ? "flex-row-reverse" : "flex-row"}`}
-                >
-                  {/* Avatar */}
-                  <div className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110 ${
-                    message.isUser 
-                      ? "bg-gray-500 dark:from-black dark:to-gray-800" 
-                      : "bg-gradient-to-br from-[#1a4d3a] to-[#2d5f47] dark:from-[#1a4d3a] dark:to-[#2d5f47]"
-                  }`}>
-                    {message.isUser ? (
-                      <svg
-                        className="w-5 h-5 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-5 h-5 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M6.343 6.343l-.707.707m12.728 0l-.707-.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                        />
-                      </svg>
-                    )}
+            {/* The crossing icons have been completely removed from here */}
+          </div>
+
+          {/* Chat Messages Area */}
+          <div className="h-[500px] overflow-y-auto custom-scrollbar p-6 space-y-6 bg-[#fafafa]/30">
+            {messages.length === 0 ? (
+              <div className="flex flex-col items-start justify-start h-full">
+                <div className="flex items-center gap-3 pl-3">
+                  <div className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 shadow-sm flex items-center justify-center flex-shrink-0">
+                    <BotDoodleIcon />
                   </div>
-
-                  {/* Message Bubble */}
-                  <div className={`flex-1 max-w-[75%] ${
-                    message.isUser ? "flex justify-end" : "flex justify-start"
-                  }`}>
-                    <div
-                      className={`px-4 py-3 shadow-lg transition-all duration-200 ${
-                        message.isUser
-                          ? "bg-gray-100  text-black rounded-2xl rounded-tr-sm"
-                          : "bg-white dark:bg-white text-black  border border-gray-200 dark:border-gray-200 rounded-2xl rounded-tl-sm"
-                      }`}
-                    >
-                      {message.isUser ? (
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                          {message.text}
-                        </p>
-                      ) : (
-                        <div className="space-y-3">
-                          {/* Fake visual flow bar (informational only) */}
-                          <div className="flex items-center text-xs text-gray-500 space-x-2 mb-1">
-                            <div className="px-2 py-1 rounded-full bg-gray-100 text-gray-600">Planning</div>
-                            <div className="text-gray-400">→</div>
-                            <div className="px-2 py-1 rounded-full bg-gray-100 text-gray-600">Retrieval</div>
-                            <div className="text-gray-400">→</div>
-                            <div className="px-2 py-1 rounded-full bg-gray-100 text-gray-600 font-semibold">Answer</div>
-                          </div>
-
-                          {/* Search Plan (REAL DATA) */}
-                          {message.plan ? (
-                            <div className="pt-2 border-t border-gray-100">
-                              <div className="text-xs text-gray-500 mb-1">🧠 <span className="font-medium">Search Plan</span></div>
-                              <div className="text-sm text-gray-800 whitespace-pre-wrap">{message.plan}</div>
-                            </div>
-                          ) : null}
-
-                          {/* Sub-Questions (REAL DATA) */}
-                          {message.sub_questions && message.sub_questions.length > 0 ? (
-                            <div className={`pt-2 ${message.plan ? "border-t border-gray-100" : ""}`}>
-                              <div className="text-xs text-gray-500 mb-1">🔍 <span className="font-medium">Sub-Questions</span></div>
-                              <ul className="list-disc list-inside text-sm text-gray-700">
-                                {message.sub_questions.map((q, idx) => (
-                                  <li key={idx} className="mb-1 whitespace-pre-wrap">{q}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          ) : null}
-
-                          {/* Final Answer (REAL DATA) — visually dominant */}
-                          <div className="pt-2 border-t border-gray-100">
-                            <div className="text-xs text-gray-500 mb-1">✅ <span className="font-medium">Final Answer</span></div>
-                            <p className="text-sm font-semibold leading-relaxed whitespace-pre-wrap text-black">{message.text}</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                  <div className="px-4 py-2 bg-white border border-gray-200 rounded-[0.4rem] text-sm text-gray-700 shadow-sm">
+                    Ask me something!
                   </div>
                 </div>
-              ))}
-              {loading && (
-                <div className="flex items-start gap-3 message-typing">
-                  {/* Robot Avatar */}
-                  <div className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-[#1a4d3a] to-[#2d5f47] dark:from-[#1a4d3a] dark:to-[#2d5f47] flex items-center justify-center shadow-lg animate-pulse">
-                    <svg
-                      className="w-5 h-5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M6.343 6.343l-.707.707m12.728 0l-.707-.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                      />
-                    </svg>
-                  </div>
-                  <div className="bg-white dark:bg-white border border-gray-200 dark:border-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex space-x-1.5">
-                        <div className="w-2 h-2 bg-[#1a4d3a] rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                        <div className="w-2 h-2 bg-[#2d5f47] rounded-full animate-bounce" style={{ animationDelay: "200ms" }}></div>
-                        <div className="w-2 h-2 bg-[#1a4d3a] rounded-full animate-bounce" style={{ animationDelay: "400ms" }}></div>
+              </div>
+            ) : (
+              <>
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`message-enter flex items-start gap-3 ${message.isUser ? "flex-row-reverse" : "flex-row"}`}
+                  >
+                    {/* Avatar */}
+                    {!message.isUser && (
+                      <div className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 shadow-sm flex items-center justify-center flex-shrink-0 mt-1">
+                        <BotDoodleIcon />
                       </div>
-                      <span className="text-sm text-black dark:text-black font-medium">AI is thinking...</span>
+                    )}
+
+                    {/* Message Bubble */}
+                    <div className={`flex-1 max-w-[80%] ${message.isUser ? "flex justify-end" : "flex justify-start"}`}>
+                      <div
+                        className={`px-4 py-2.5 text-sm leading-relaxed transition-all duration-200 ${
+                          message.isUser
+                            ? "bg-gray-100 text-gray-800 rounded-2xl"
+                            : "bg-white text-gray-800 border border-gray-200 rounded-2xl shadow-sm"
+                        }`}
+                      >
+                        {message.isUser ? (
+                          <p className="whitespace-pre-wrap">{message.text}</p>
+                        ) : (
+                          <div className="space-y-3">
+                            {/* Search Plan */}
+                            {message.plan ? (
+                              <div className="pb-2 border-b border-gray-100">
+                                <div className="text-xs text-gray-400 mb-1 font-medium tracking-wide uppercase">Plan</div>
+                                <div className="text-sm text-gray-600 whitespace-pre-wrap">{message.plan}</div>
+                              </div>
+                            ) : null}
+
+                            {/* Sub-Questions */}
+                            {message.sub_questions && message.sub_questions.length > 0 ? (
+                              <div className={`pb-2 ${message.plan ? "" : "border-b border-gray-100"}`}>
+                                <div className="text-xs text-gray-400 mb-1 font-medium tracking-wide uppercase">Sub-Questions</div>
+                                <ul className="list-disc list-inside text-sm text-gray-600">
+                                  {message.sub_questions.map((q, idx) => (
+                                    <li key={idx} className="mb-1 whitespace-pre-wrap">{q}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ) : null}
+
+                            {/* Final Answer */}
+                            <div>
+                              <p className="text-sm text-gray-800 whitespace-pre-wrap">{message.text}</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </>
-          )}
-        </div>
-
-        {/* Input Bar */}
-        <div className="border-t border-gray-200 dark:border-gray-200 bg-white dark:bg-white p-4">
-          <div className="flex items-center gap-3">
-            {/* File Upload Button */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="application/pdf"
-              onChange={handleFileUpload}
-              className="hidden"
-              id="file-upload"
-            />
-            <label
-              htmlFor="file-upload"
-              className={`button-click flex items-center justify-center px-4 h-10 rounded-xl cursor-pointer transition-all duration-300 shadow-md hover:shadow-lg font-medium text-sm ${
-                pdfUploaded
-                  ? "bg-gray-100 dark:bg-gray-100 text-gray-600 dark:text-gray-600 border border-gray-300 dark:border-gray-300 hover:bg-gray-200 dark:hover:bg-gray-200"
-                  : "bg-black text-white dark:text-white border border-black dark:border-black hover:from-gray-800 hover:to-gray-700 dark:hover:from-gray-200 dark:hover:to-gray-700"
-              }`}
-            >
-              <svg
-                className={`w-5 h-5 mr-2 ${pdfUploaded ? "text-gray-600 dark:text-gray-600" : "text-white"}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                {pdfUploaded ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  />
+                ))}
+                {loading && (
+                  <div className="flex items-center gap-3 message-typing">
+                    <div className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 shadow-sm flex items-center justify-center flex-shrink-0">
+                      <BotDoodleIcon />
+                    </div>
+                    <div className="px-4 py-3 bg-white border border-gray-200 rounded-2xl shadow-sm flex items-center space-x-1.5">
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                    </div>
+                  </div>
                 )}
-              </svg>
-              {pdfUploaded ? "PDF Uploaded" : "Upload PDF"}
-            </label>
+                <div ref={messagesEndRef} />
+              </>
+            )}
+          </div>
 
-            {/* Toggle next to Upload */}
-            <div className="flex items-center">
-              <PlanningToggle
-                value={usePlanning}
-                onChange={setUsePlanning}
+          {/* Seamless Input Bar */}
+          <div className="border-t border-gray-100 bg-white p-3">
+            <div className="flex items-center gap-3">
+              
+              {/* Minimal Upload Button */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/pdf"
+                onChange={handleFileUpload}
+                className="hidden"
+                id="file-upload"
               />
+              <label
+                htmlFor="file-upload"
+                title="Upload PDF"
+                className={`flex items-center justify-center w-10 h-10 rounded-md cursor-pointer transition-colors ${
+                  pdfUploaded
+                    ? "text-green-500 bg-green-50"
+                    : "text-gray-400 bg-gray-200 hover:text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {pdfUploaded ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                  )}
+                </svg>
+              </label>
+
+              {/* Seamless Text Input */}
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="flex-1 h-10 bg-transparent border-none text-gray-800 text-sm placeholder-gray-400 focus:outline-none focus:ring-0"
+                placeholder="Ask me something or..."
+              />
+
+              {/* Minimal Planning Toggle */}
+              <div className="flex items-center h-10 px-2 bg-white border border-gray-200 rounded-[0.5rem] shadow-sm">
+                <PlanningToggle
+                  value={usePlanning}
+                  onChange={setUsePlanning}
+                />
+              </div>
+
+              {/* Modern Send Button */}
+              <button
+                onClick={sendMessage}
+                disabled={!input.trim() || loading}
+                className="flex items-center justify-center w-10 h-10 rounded-md bg-white text-gray-700 border border-gray-200 shadow-sm hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-white transition-colors"
+              >
+                {loading ? (
+                  <svg className="w-4 h-4 animate-spin text-gray-500" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                )}
+              </button>
             </div>
-
-            {/* Text Input */}
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              className="flex-1 h-10 px-4 rounded-xl border border-gray-300 dark:border-gray-300 bg-white dark:bg-white text-black dark:text-black placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1a4d3a] focus:border-[#1a4d3a] transition-all duration-200 shadow-sm"
-              placeholder="Ask a question about the content..."
-            />
-
-            {/* Send Button */}
-            <button
-              onClick={sendMessage}
-              disabled={!input.trim() || loading}
-              className="button-click flex items-center justify-center w-11 h-10 rounded-xl bg-black dark:from-black dark:to-gray-800 text-white dark:text-white border border-black dark:border-black shadow-md hover:shadow-lg hover:from-gray-800 hover:to-gray-700 dark:hover:from-gray-800 dark:hover:to-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 active:scale-95"
-            >
-              {loading ? (
-                <svg
-                  className="w-5 h-5 animate-spin"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-              ) : (
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                  />
-                </svg>
-              )}
-            </button>
           </div>
         </div>
-      </div>
       </div>
     </>
   )

@@ -41,58 +41,55 @@ export default function WelcomeModal({ onClose }: WelcomeModalProps) {
         </button>
 
         {/* Robot Illustration */}
-        <div className="flex justify-center mb-6 relative">
-          <div className="relative">
-            {/* Stars */}
-            <svg
-              className="absolute -top-2 -left-4 w-6 h-6 text-[#1a4d3a] animate-pulse"
-              fill="currentColor"
-              viewBox="0 0 20 20"
+<div className="flex justify-center mb-6 relative">
+          {/* Large Yellow Doodle Icon */}
+          <div className="w-56 h-auto mx-auto drop-shadow-sm">
+            <svg 
+              className="w-full h-full"
+              viewBox="0 0 140 80" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              {/* 1. Doodle Swoosh Lines */}
+              <path 
+                d="M 15 32 C 35 22, 60 18, 80 32" 
+                stroke="#292929" 
+                strokeWidth="2.5" 
+                strokeLinecap="round" 
+              />
+              <path 
+                d="M 32 42 C 45 33, 62 30, 80 43" 
+                stroke="#292929" 
+                strokeWidth="2.5" 
+                strokeLinecap="round" 
+              />
+
+              {/* 2. Yellow Circle Background */}
+              <circle cx="100" cy="40" r="28" fill="#F6C764"/>
+
+              {/* 3. Tilted Open Book Group */}
+              <g transform="translate(100 40) rotate(-15)">
+                {/* Book pages outline */}
+                <path 
+                  d="M -16,-12 Q -8,-17 0,-10 Q 8,-17 16,-12 L 13,14 Q 7,10 0,13 Q -7,10 -13,14 Z" 
+                  fill="white" 
+                  stroke="#292929" 
+                  strokeWidth="2.5" 
+                  strokeLinejoin="round" 
+                  strokeLinecap="round"
+                />
+                {/* Center Spine Crease */}
+                <path 
+                  d="M 0,-10 L 0,13" 
+                  stroke="#292929" 
+                  strokeWidth="2.5" 
+                  strokeLinecap="round"
+                />
+                {/* Eyes on the pages */}
+                <circle cx="-5.5" cy="-2" r="2" fill="#292929"/>
+                <circle cx="5.5" cy="-2" r="2" fill="#292929"/>
+              </g>
             </svg>
-            <svg
-              className="absolute -top-2 -right-4 w-6 h-6 text-[#1a4d3a] animate-pulse"
-              style={{ animationDelay: "0.5s" }}
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
-            
-            {/* Robot */}
-            <div className="w-32 h-32 mx-auto relative">
-              {/* Robot Body */}
-              <div className="w-24 h-24 bg-gradient-to-br from-[#1a4d3a] to-[#2d5f47] rounded-2xl mx-auto shadow-lg flex items-center justify-center relative">
-                {/* Robot Face */}
-                <div className="w-16 h-16 bg-white rounded-xl flex flex-col items-center justify-center gap-1">
-                  {/* Eyes */}
-                  <div className="flex gap-2">
-                    <div className="w-3 h-3 bg-[#1a4d3a] rounded-full"></div>
-                    <div className="w-3 h-3 bg-[#1a4d3a] rounded-full"></div>
-                  </div>
-                  {/* Mouth */}
-                  <div className="w-8 h-1 bg-[#1a4d3a] rounded-full"></div>
-                </div>
-              </div>
-              
-              {/* Headset */}
-              <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-                <div className="w-20 h-6 bg-gray-300 rounded-full flex items-center justify-center">
-                  <div className="w-16 h-4 bg-gray-400 rounded-full"></div>
-                </div>
-              </div>
-              
-              {/* Speech Bubble */}
-              <div className="absolute -right-8 top-4 bg-white dark:bg-white rounded-lg p-2 shadow-md border border-gray-200">
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-[#1a4d3a] rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                  <div className="w-2 h-2 bg-[#2d5f47] rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                  <div className="w-2 h-2 bg-[#1a4d3a] rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
-                </div>
-                <div className="absolute -bottom-1 left-4 w-2 h-2 bg-white dark:bg-white transform rotate-45 border-r border-b border-gray-200"></div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -110,7 +107,7 @@ export default function WelcomeModal({ onClose }: WelcomeModalProps) {
         <div className="space-y-3 mb-6">
           <div className="flex items-center gap-3">
             <svg
-              className="w-5 h-5 text-[#1a4d3a] flex-shrink-0"
+              className="w-5 h-5 text-[#449e3e] flex-shrink-0"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -126,7 +123,7 @@ export default function WelcomeModal({ onClose }: WelcomeModalProps) {
           </div>
           <div className="flex items-center gap-3">
             <svg
-              className="w-5 h-5 text-[#1a4d3a] flex-shrink-0"
+              className="w-5 h-5 text-[#d6dc28] flex-shrink-0"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -142,7 +139,7 @@ export default function WelcomeModal({ onClose }: WelcomeModalProps) {
           </div>
           <div className="flex items-center gap-3">
             <svg
-              className="w-5 h-5 text-[#1a4d3a] flex-shrink-0"
+              className="w-5 h-5 text-[#e8b11a] flex-shrink-0"
               fill="currentColor"
               viewBox="0 0 20 20"
             >

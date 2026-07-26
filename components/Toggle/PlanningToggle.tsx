@@ -21,16 +21,16 @@ export default function PlanningToggle({
       <button
         type="button"
         onClick={() => onChange(!value)}
-        className={`button-click relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#1a4d3a] focus:ring-offset-2 ${
+        className={`button-click relative inline-flex h-6 w-11 items-center rounded-[0.3rem] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#5b615f] focus:ring-offset-2 ${
           value
-            ? "bg-gradient-to-r from-[#1a4d3a] to-[#2d5f47] dark:from-[#1a4d3a] dark:to-[#2d5f47] shadow-md"
+            ? "bg-gradient-to-r from-[#393a39] to-[#2e2e2e] dark:from-[#838685] dark:to-[#808281] shadow-md"
             : "bg-gray-300 dark:bg-gray-300"
         }`}
         role="switch"
         aria-checked={value}
       >
         <span
-          className={`toggle-slide inline-block h-4 w-4 transform rounded-full bg-white shadow-lg transition-transform duration-300 ${
+          className={`toggle-slide inline-block h-4 w-4 transform rounded-[0.6rem] bg-white shadow-lg transition-transform duration-300 ${
             value ? "translate-x-6" : "translate-x-1"
           }`}
         />
