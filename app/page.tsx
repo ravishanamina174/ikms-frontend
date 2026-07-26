@@ -1,119 +1,70 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React from "react";
 import ChatUI from "@/components/Chat/ChatUI";
 import { motion } from "framer-motion";
 
 export default function Home() {
-  // State and ref for the interactive dotted background
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
-  
-  // 1. Tell TypeScript this ref will hold an HTMLElement
-  const sectionRef = useRef<HTMLElement>(null); 
-
-  // 2. Tell TypeScript 'e' is a React Mouse Event
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    if (!sectionRef.current) return;
-    const rect = sectionRef.current.getBoundingClientRect();
-    setMousePosition({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  };
   return (
-    <main className="min-h-screen bg-white dark:bg-black">
-      {/* Hero Section */}
-      <section className="relative w-full overflow-hidden mb-15 py-20 md:py-28 lg:py-36 px-6 md:px-10 lg:px-16 bg-white dark:bg-black">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-16">
-            {/* LEFT — Text */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 2.8, ease: "easeOut" }}
-              className="text-center lg:text-left"
-            >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-black dark:text-white">
-                IKMS – Multi Agent RAG Chat
-              </h1>
+    <main className="min-h-screen relative bg-gray-50 dark:bg-[#09090b] flex flex-col items-center overflow-hidden selection:bg-green-500/30">
+      
+      {/* 1. Modern Background Pattern (Perspective Grid) */}
+      <div className="absolute inset-0 pointer-events-none flex justify-center">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_0%,#000_70%,transparent_100%)]" />
+      </div>
 
-              <p className="mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-xl mx-auto lg:mx-0">
-                <span className="text-green-800 dark:text-green-700 font-bold">
-                  Intelligent
-                </span>{" "}
-                Knowledge Management System
-              </p>
+      {/* 2. Top Ambient Glow */}
+      <div className="absolute top-0 inset-x-0 h-[500px] pointer-events-none bg-gradient-to-b from-pink-400/10 via-transparent to-transparent dark:from-purple-300/10 dark:via-transparent dark:to-transparent" />
 
-              <p className="mt-6 text-sm md:text-base text-gray-500 dark:text-gray-400 max-w-xl mx-auto lg:mx-0">
-                Orchestrating retrieval, reasoning, and autonomous agents to transform
-                enterprise knowledge into{" "}
-                <span className="text-green-800 dark:text-green-700">
-                  Intelligent
-                </span>{" "}
-                conversations.
-              </p>
-            </motion.div>
+      {/* Hero Text Section */}
+      <section className="relative z-10 w-full max-w-5xl mx-auto pt-24 md:pt-32 px-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+        >
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-gray-900 dark:text-white drop-shadow-sm">
+            IKMS – Multi Agent RAG Chat
+          </h1>
 
-            {/* RIGHT — Image */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 2.8, delay: 0.2, ease: "easeOut" }}
-              className="relative flex justify-center lg:justify-end"
-            >
-              <div className="relative w-full max-w-xl rounded-[0.4rem] border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl overflow-hidden">
-                <img
-                  src="/hero.png"
-                  alt="AI knowledge flow visualization"
-                  className="w-full h-auto"
-                />
-              </div>
-            </motion.div>
+          <p className="mt-6 text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-medium">
+            <span className="text-orange-500 dark:text-blue-300 font-bold">
+              Intelligent
+            </span>{" "}
+            Knowledge Management System
+          </p>
+
+          <p className="mt-6 text-base md:text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
+            Orchestrating retrieval, reasoning, and autonomous agents to transform
+            enterprise knowledge into{" "}
+            <span className="text-orange-400 dark:text-blue-300 font-semibold">
+              Intelligent
+            </span>{" "}
+            conversations.
+          </p>
+        </motion.div>
+      </section>
+
+      {/* ChatUI Section with Tighter Lightning/Glow Effect */}
+      <section className="relative z-10 w-full max-w-4xl mx-auto mt-16 md:mt-24 px-4 pb-24">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
+          className="relative w-full"
+        >
+          {/* Tight inner glow wrapping exactly around the ChatUI frame */}
+          <div className="absolute inset-0 bg-orange-500/20 dark:bg-blue-500/25 blur-[40px] rounded-[1rem] pointer-events-none" />
+          
+          {/* Slightly wider ambient glow for a soft falloff */}
+          <div className="absolute inset-[-30px] bg-green-400/10 dark:bg-blue-300/10 blur-[80px] rounded-[2rem] pointer-events-none" />
+
+          {/* Main ChatUI Container */}
+          <div className="relative z-10 w-full">
+            <ChatUI />
           </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* ChatUI Section with Modern Interactive Dotted Background */}
-      <section 
-        ref={sectionRef}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
-        className="relative w-full py-16 md:py-24 px-6 md:px-8 lg:px-12 bg-white dark:bg-black overflow-hidden min-h-[800px] flex items-center justify-center"
-      >
-        {/* 1. Base light dotted background */}
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(#e5e7eb_1.5px,transparent_1.5px)] dark:bg-[radial-gradient(#374151_1.5px,transparent_1.5px)] [background-size:24px_24px]" />
-
-        {/* 2. Interactive beautiful multi-color dots connected to cursor */}
-        <div
-          className="absolute inset-0 pointer-events-none transition-opacity duration-500 ease-out"
-          style={{
-            opacity: isHovering ? 0.5 : 0,
-            background: "linear-gradient(135deg, #38bdf8, #818cf8, #c084fc, #e879f9, #34d399)",
-            WebkitMaskImage: `
-              radial-gradient(350px circle at ${mousePosition.x}px ${mousePosition.y}px, black, transparent),
-              radial-gradient(black 1.5px, transparent 1.5px)
-            `,
-            WebkitMaskSize: "100% 100%, 24px 24px",
-            WebkitMaskPosition: "0 0, 0 0",
-            WebkitMaskRepeat: "no-repeat, repeat",
-            WebkitMaskComposite: "source-in",
-            maskImage: `
-              radial-gradient(350px circle at ${mousePosition.x}px ${mousePosition.y}px, black, transparent),
-              radial-gradient(black 1.5px, transparent 1.5px)
-            `,
-            maskSize: "100% 100%, 24px 24px",
-            maskPosition: "0 0, 0 0",
-            maskRepeat: "no-repeat, repeat",
-            maskComposite: "intersect",
-          }}
-        />
-
-        {/* 3. Main Content Layer */}
-        <div className="relative z-10 w-full max-w-5xl mx-auto">
-          <ChatUI />
-        </div>
-      </section>
     </main>
   );
 }
