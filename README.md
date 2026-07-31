@@ -1,5 +1,7 @@
 ## IKMS Frontend
 
+<img src="/IKMS.png" alt="IKMS-Dashboard" />
+
 - Project: Intelligent Knowledge Management System (Frontend)
 - Purpose: UI for uploading PDFs, chatting with documents, and managing knowledge.
 
