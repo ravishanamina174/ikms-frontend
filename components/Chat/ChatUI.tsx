@@ -59,8 +59,7 @@ export default function ChatUI() {
     setMessageId((prev) => prev + 1)
 
     try {
-      const res = await askQuestion(userMessage, usePlanning)
-      const data = await res.json()
+      const data = await askQuestion(userMessage, usePlanning)
 
       // Show AI response with animation
       const aiMessage: Message = {
@@ -74,10 +73,10 @@ export default function ChatUI() {
       }
       setMessages((prev) => [...prev, aiMessage])
       setMessageId((prev) => prev + 2)
-    } catch (err) {
+    } catch (error) {
       const errorMessage: Message = {
         id: messageId + 1,
-        text: "Error occurred while answering.",
+        text: error instanceof Error ? error.message : "Error occurred while answering.",
         isUser: false,
         timestamp: Date.now(),
       }
@@ -96,9 +95,10 @@ export default function ChatUI() {
       await uploadPDF(file)
       setPdfUploaded(true)
       alert("PDF indexed successfully")
-    } catch (err) {
-      console.error("Upload error details:", err)
-      alert("Error uploading PDF. Please check your backend connection.")
+    } catch (error) {
+      console.error("Upload error details:", error)
+      const message = error instanceof Error ? error.message : "PDF upload failed."
+      alert(message)
     } finally {
       if (e.target) {
         e.target.value = ""
